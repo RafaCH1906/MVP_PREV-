@@ -1,0 +1,475 @@
+[
+ {
+  "id": "IPERC-C01",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 2,
+    "propiedad": 4,
+    "proceso": 4,
+    "severidad": 2,
+    "prob": "B",
+    "modificada": false
+   },
+   "nivel": 5,
+   "clasificacion": "Alto"
+  },
+  "residual": {
+   "factores": {
+    "lesion": 2,
+    "propiedad": 4,
+    "proceso": 4,
+    "severidad": 2,
+    "prob": "D",
+    "modificada": false
+   },
+   "nivel": 12,
+   "clasificacion": "Medio"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-C02",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 1,
+    "propiedad": 3,
+    "proceso": 3,
+    "severidad": 1,
+    "prob": "C",
+    "modificada": false
+   },
+   "nivel": 4,
+   "clasificacion": "Alto"
+  },
+  "residual": {
+   "factores": {
+    "lesion": 1,
+    "propiedad": 3,
+    "proceso": 3,
+    "severidad": 1,
+    "prob": "E",
+    "modificada": false
+   },
+   "nivel": 11,
+   "clasificacion": "Medio"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-C03",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 2,
+    "propiedad": 5,
+    "proceso": 4,
+    "severidad": 2,
+    "prob": "C",
+    "modificada": false
+   },
+   "nivel": 8,
+   "clasificacion": "Alto"
+  },
+  "residual": {
+   "factores": {
+    "lesion": 2,
+    "propiedad": 5,
+    "proceso": 4,
+    "severidad": 2,
+    "prob": "E",
+    "modificada": false
+   },
+   "nivel": 16,
+   "clasificacion": "Bajo"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-C04",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 2,
+    "propiedad": 3,
+    "proceso": 4,
+    "severidad": 2,
+    "prob": "C",
+    "modificada": false
+   },
+   "nivel": 8,
+   "clasificacion": "Alto"
+  },
+  "residual": {
+   "factores": {
+    "lesion": 2,
+    "propiedad": 3,
+    "proceso": 4,
+    "severidad": 2,
+    "prob": "D",
+    "modificada": false
+   },
+   "nivel": 12,
+   "clasificacion": "Medio"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-C05",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 3,
+    "propiedad": 5,
+    "proceso": 5,
+    "severidad": 3,
+    "prob": "B",
+    "modificada": false
+   },
+   "nivel": 9,
+   "clasificacion": "Medio"
+  },
+  "residual": {
+   "factores": {
+    "lesion": 3,
+    "propiedad": 5,
+    "proceso": 5,
+    "severidad": 3,
+    "prob": "C",
+    "modificada": false
+   },
+   "nivel": 13,
+   "clasificacion": "Medio"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-C06",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 3,
+    "propiedad": 5,
+    "proceso": 5,
+    "severidad": 3,
+    "prob": "B",
+    "modificada": false
+   },
+   "nivel": 9,
+   "clasificacion": "Medio"
+  },
+  "residual": {
+   "factores": {
+    "lesion": 3,
+    "propiedad": 5,
+    "proceso": 5,
+    "severidad": 3,
+    "prob": "D",
+    "modificada": false
+   },
+   "nivel": 17,
+   "clasificacion": "Bajo"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-C07",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 3,
+    "propiedad": 4,
+    "proceso": 3,
+    "severidad": 3,
+    "prob": "C",
+    "modificada": false
+   },
+   "nivel": 13,
+   "clasificacion": "Medio"
+  },
+  "residual": {
+   "factores": {
+    "lesion": 3,
+    "propiedad": 4,
+    "proceso": 3,
+    "severidad": 3,
+    "prob": "E",
+    "modificada": false
+   },
+   "nivel": 20,
+   "clasificacion": "Bajo"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-C08",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 4,
+    "propiedad": 5,
+    "proceso": 5,
+    "severidad": 4,
+    "prob": "C",
+    "modificada": false
+   },
+   "nivel": 18,
+   "clasificacion": "Bajo"
+  },
+  "residual": null,
+  "significativo": false
+ },
+ {
+  "id": "IPERC-C09",
+  "metodologia": "MINERIA",
+  "expuestos": null,
+  "inicial": {
+   "factores": {
+    "lesion": 2,
+    "propiedad": 4,
+    "proceso": 3,
+    "severidad": 2,
+    "prob": "B",
+    "modificada": false
+   },
+   "nivel": 5,
+   "clasificacion": "Alto"
+  },
+  "residual": {
+   "factores": {
+    "lesion": 2,
+    "propiedad": 4,
+    "proceso": 3,
+    "severidad": 2,
+    "prob": "D",
+    "modificada": false
+   },
+   "nivel": 12,
+   "clasificacion": "Medio"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-W01",
+  "metodologia": "MTPE",
+  "expuestos": 29,
+  "inicial": {
+   "factores": {
+    "A": 3,
+    "B": 2,
+    "C": 2,
+    "D": 3,
+    "S": 2
+   },
+   "nivel": 20,
+   "clasificacion": "Importante"
+  },
+  "residual": {
+   "factores": {
+    "A": 3,
+    "B": 1,
+    "C": 1,
+    "D": 3,
+    "S": 2
+   },
+   "nivel": 16,
+   "clasificacion": "Moderado"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-W02",
+  "metodologia": "MTPE",
+  "expuestos": 11,
+  "inicial": {
+   "factores": {
+    "A": 2,
+    "B": 1,
+    "C": 2,
+    "D": 3,
+    "S": 2
+   },
+   "nivel": 16,
+   "clasificacion": "Moderado"
+  },
+  "residual": {
+   "factores": {
+    "A": 2,
+    "B": 1,
+    "C": 1,
+    "D": 3,
+    "S": 2
+   },
+   "nivel": 14,
+   "clasificacion": "Moderado"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-W03",
+  "metodologia": "MTPE",
+  "expuestos": 40,
+  "inicial": {
+   "factores": {
+    "A": 3,
+    "B": 2,
+    "C": 2,
+    "D": 3,
+    "S": 1
+   },
+   "nivel": 10,
+   "clasificacion": "Moderado"
+  },
+  "residual": {
+   "factores": {
+    "A": 3,
+    "B": 2,
+    "C": 1,
+    "D": 3,
+    "S": 1
+   },
+   "nivel": 9,
+   "clasificacion": "Moderado"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-W04",
+  "metodologia": "MTPE",
+  "expuestos": 1,
+  "inicial": {
+   "factores": {
+    "A": 1,
+    "B": 2,
+    "C": 2,
+    "D": 3,
+    "S": 1
+   },
+   "nivel": 8,
+   "clasificacion": "Tolerable"
+  },
+  "residual": null,
+  "significativo": false
+ },
+ {
+  "id": "IPERC-W05",
+  "metodologia": "MTPE",
+  "expuestos": 40,
+  "inicial": {
+   "factores": {
+    "A": 3,
+    "B": 2,
+    "C": 2,
+    "D": 3,
+    "S": 2
+   },
+   "nivel": 20,
+   "clasificacion": "Importante"
+  },
+  "residual": {
+   "factores": {
+    "A": 3,
+    "B": 1,
+    "C": 1,
+    "D": 3,
+    "S": 2
+   },
+   "nivel": 16,
+   "clasificacion": "Moderado"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-W06",
+  "metodologia": "MTPE",
+  "expuestos": 40,
+  "inicial": {
+   "factores": {
+    "A": 3,
+    "B": 2,
+    "C": 2,
+    "D": 1,
+    "S": 3
+   },
+   "nivel": 24,
+   "clasificacion": "Importante"
+  },
+  "residual": {
+   "factores": {
+    "A": 3,
+    "B": 1,
+    "C": 1,
+    "D": 1,
+    "S": 3
+   },
+   "nivel": 18,
+   "clasificacion": "Importante"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-W07",
+  "metodologia": "MTPE",
+  "expuestos": 6,
+  "inicial": {
+   "factores": {
+    "A": 2,
+    "B": 2,
+    "C": 2,
+    "D": 2,
+    "S": 3
+   },
+   "nivel": 24,
+   "clasificacion": "Importante"
+  },
+  "residual": {
+   "factores": {
+    "A": 2,
+    "B": 1,
+    "C": 1,
+    "D": 1,
+    "S": 3
+   },
+   "nivel": 15,
+   "clasificacion": "Moderado"
+  },
+  "significativo": true
+ },
+ {
+  "id": "IPERC-W08",
+  "metodologia": "MTPE",
+  "expuestos": 40,
+  "inicial": {
+   "factores": {
+    "A": 3,
+    "B": 3,
+    "C": 2,
+    "D": 3,
+    "S": 1
+   },
+   "nivel": 11,
+   "clasificacion": "Moderado"
+  },
+  "residual": {
+   "factores": {
+    "A": 3,
+    "B": 1,
+    "C": 1,
+    "D": 3,
+    "S": 1
+   },
+   "nivel": 8,
+   "clasificacion": "Tolerable"
+  },
+  "significativo": true
+ }
+]
