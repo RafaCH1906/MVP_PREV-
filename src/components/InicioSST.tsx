@@ -10,7 +10,7 @@ import { Acc, Act, SEL_ACC, SEL_ACT, accVencida, actVencida, etiquetas, fechaDM,
 import { esLector } from "@/lib/roles";
 import AlertaInmediata, { AccionInm } from "./AlertaInmediata";
 
-type Fila = { id: string; codigo: string; nivel_inicial: number; clasif_inicial: string; significativo: boolean };
+type Fila = { id: string; iperc_id: string; codigo: string; nivel_inicial: number; clasif_inicial: string; significativo: boolean };
 type Ver = { version: number; estado: string };
 type Hito = { tipo: string; estado: string; fecha: string | null };
 
@@ -28,7 +28,7 @@ export default function InicioSST() {
       supabase.from("v_brecha").select("item_n", { count: "exact", head: true }),
       supabase.from("iperc_version").select("version,estado").order("version"),
       supabase.from("hito_documento").select("tipo,estado,fecha"),
-      supabase.from("iperc_fila").select("id,codigo,nivel_inicial,clasif_inicial,significativo"),
+      supabase.from("iperc_fila").select("id,iperc_id,codigo,nivel_inicial,clasif_inicial,significativo"),
       supabase.from("actividad").select(SEL_ACT),
       supabase.from("accion").select(SEL_ACC),
     ]);

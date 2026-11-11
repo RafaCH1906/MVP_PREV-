@@ -37,8 +37,8 @@ export default function TrazaPanel({ tipo, id }: { tipo: "accion" | "actividad" 
       : [];
     nodos.push({ k: "e", txt: ev.length ? `Evidencia (${ev.length})` : "Evidencia (pendiente)", pendiente: ev.length === 0 });
     if (filaId) {
-      const f = ok(await supabase.from("iperc_fila").select("codigo,clasif_inicial,nivel_inicial,iperc:iperc_version(version,estado)").eq("id", filaId).limit(1)) as unknown as { codigo: string; clasif_inicial: string; nivel_inicial: number; iperc: { version: number; estado: string } | null }[];
-      if (f[0]) nodos.push({ k: "f", txt: `Fila ${f[0].codigo} · v${f[0].iperc?.version} ${f[0].iperc?.estado === "BORRADOR" ? "borrador" : "aprobada"} · ${f[0].clasif_inicial} (${f[0].nivel_inicial})`, href: `/iperc/${f[0].codigo}` });
+      const f = ok(await supabase.from("iperc_fila").select("codigo,iperc_id,clasif_inicial,nivel_inicial,iperc:iperc_version(version,estado)").eq("id", filaId).limit(1)) as unknown as { codigo: string; iperc_id: string; clasif_inicial: string; nivel_inicial: number; iperc: { version: number; estado: string } | null }[];
+      if (f[0]) nodos.push({ k: "f", txt: `Fila ${f[0].codigo} · v${f[0].iperc?.version} ${f[0].iperc?.estado === "BORRADOR" ? "borrador" : "aprobada"} · ${f[0].clasif_inicial} (${f[0].nivel_inicial})`, href: `/iperc/${f[0].codigo}?v=${f[0].iperc_id}` });
     }
     return nodos;
   }, [tipo, id]);

@@ -17,7 +17,7 @@ export default function Pendientes() {
     const acts = ok(await supabase.from("actividad").select(SEL_ACT).eq("responsable_id", perfil!.id).in("estado", ["PROGRAMADA", "EN_CURSO"]).order("fecha_fin")) as unknown as Act[];
     const accs = ok(await supabase.from("accion").select(SEL_ACC).eq("responsable_id", perfil!.id).in("estado", ["ASIGNADA", "EN_IMPLEMENTACION"]).order("vence_en")) as unknown as Acc[];
     const fids = accs.map((a) => a.control?.fila_id).filter(Boolean) as string[];
-    const filas = fids.length ? ok(await supabase.from("iperc_fila").select("id,codigo,nivel_inicial,clasif_inicial").in("id", fids)) as { id: string; codigo: string; nivel_inicial: number; clasif_inicial: string }[] : [];
+    const filas = fids.length ? ok(await supabase.from("iperc_fila").select("id,iperc_id,codigo,nivel_inicial,clasif_inicial").in("id", fids)) as { id: string; iperc_id: string; codigo: string; nivel_inicial: number; clasif_inicial: string }[] : [];
     return { acts, accs, filas };
   }, [perfil]);
   if (cargando) return <Cargando />;

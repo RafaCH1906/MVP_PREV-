@@ -83,3 +83,15 @@ Para probar en el celular: misma red WiFi → `http://IP-de-tu-PC:3000`, o despl
 W1 Inicio (`/`) · W2 cuestionario (`/diagnostico/bloque/N`) · W3 resultados (`/diagnostico`) · W4 evaluar fila (`/iperc/IPERC-C09`) · W5 matriz (`/iperc`) · W6 plan (`/plan`) · W7 celular (`/` con `luis.huaman`, `/registro/accion/ID`) · W8 hallazgo (`/seguimiento/ID`).
 Ejecutar también `supabase/policies_extra.sql` (permite reportar hallazgos desde el celular).
 Las fotos de evidencia se guardan reducidas dentro de la tabla `evidencia` (sin Storage) para simplificar la demo.
+
+## Orden de SQL en cada proyecto de Supabase (dev primero, luego prod)
+
+1. `supabase/schema.sql` → `seed.sql` → `policies.sql` (ya ejecutados)
+2. `supabase/policies_extra.sql` (permite reportar hallazgos)
+3. `supabase/migracion_001.sql` (fotos de hallazgo, alcance de tareas, edición de estructura, roles por ADMIN)
+
+## Pantallas añadidas
+- IPERC: crear borrador, editar filas, validar, aprobar (versiones) · acción inmediata automática (RF-36)
+- Plan: generar y aprobar · Seguimiento: agregar acciones, evidencia con foto, verificar o rechazar (RF-28)
+- Empresa: datos, sedes → áreas → puestos, tareas en alcance · Usuarios: roles y activo (solo ADMIN)
+- Reportar hallazgo con foto

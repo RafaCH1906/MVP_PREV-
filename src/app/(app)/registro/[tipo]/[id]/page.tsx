@@ -11,28 +11,28 @@ import { fechaDM, hora, origenTag, SEL_ACC, SEL_ACT, Acc, Act } from "@/lib/cons
 import { formatoRestante, minutosRestantes } from "@/lib/iperc/engine";
 import { puedeGestionar, soloActividad } from "@/lib/roles";
 import TrazaPanel from "@/components/TrazaPanel";
+import { reducir } from "@/lib/imagen";
 
 type Ev = { id: string; tipo: string; url: string; nota: string | null; creado_en: string };
 
-/** Reduce la foto a ~800 px para guardarla como data URL (demo sin Storage). */
-function reducir(file: File): Promise<string> {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onerror = () => rej(new Error("No se pudo leer la imagen"));
-    r.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const k = Math.min(1, 800 / Math.max(img.width, img.height));
-        const c = document.createElement("canvas");
-        c.width = img.width * k; c.height = img.height * k;
-        c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
-        res(c.toDataURL("image/jpeg", 0.7));
-      };
-      img.onerror = () => rej(new Error("Imagen no válida"));
-      img.src = String(r.result);
-    };
-    r.readAsDataURL(file);
-  });
+function EditarActividad({ act, onGuardado }: { act: Act; onGuardado: () => void }) {
+  const [resp, setResp] = useState(act.responsable_id ?? "");
+  const [fecha, setFecha] = useState(act.fecha_fin ?? "");
+  const [desc, setDesc] = useState(act.descripcion);
+  const [err, setErr] = useState<string | null>(null);
+  const { datos } = useCarga(async () => ok(await supabase.from("usuario").select("id,nombre").order("nombre")) as { id: string; nombre: string }[], []);
+  const guardar = async () => {
+    const { error: e } = await supabase.from("actividad").update({ responsable_id: resp || null, fecha_fin: fecha || null, descripcion: desc }).eq("id", act.id);
+    if (e) setErr(e.message); else onGuardado();
+  };
+  return (
+    <div className="blk"><h4>Editar actividad (P03)</h4>
+      <div className="field"><span className="k" style={{ width: 90 }}>Descripción</span><input className="in" value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
+      <div className="field"><span className="k" style={{ width: 90 }}>Responsable</span><select className="in" value={resp} onChange={(e) => setResp(e.target.value)}><option value="">Pendiente</option>{(datos ?? []).map((u) => <option key={u.id} value={u.id}>{u.nombre}</option>)}</select></div>
+      <div className="field"><span className="k" style={{ width: 90 }}>Fecha límite</span><input className="in" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} /></div>
+      <button className="btn pri" onClick={guardar}>Guardar cambios</button>{err && <small className="bad"> {err}</small>}
+    </div>
+  );
 }
 
 /** W7 (derecha) · S05/S02: acción inmediata o actividad, con evidencia, envío y verificación. */
@@ -52,7 +52,7 @@ export default function Registro() {
     if (!reg[0]) throw new Error("Registro no encontrado");
     const ev = ok(await supabase.from("evidencia").select("id,tipo,url,nota,creado_en").eq(col, id).order("creado_en")) as Ev[];
     const fid = reg[0].control?.fila_id;
-    const fila = fid ? (ok(await supabase.from("iperc_fila").select("codigo,nivel_inicial,clasif_inicial").eq("id", fid).limit(1)) as { codigo: string; nivel_inicial: number; clasif_inicial: string }[])[0] : null;
+    const fila = fid ? (ok(await supabase.from("iperc_fila").select("codigo,iperc_id,nivel_inicial,clasif_inicial").eq("id", fid).limit(1)) as { codigo: string; iperc_id: string; nivel_inicial: number; clasif_inicial: string }[])[0] : null;
     return { reg: reg[0], ev, fila: fila ?? null };
   }, [tipo, id, perfil, v]);
   if (cargando && !datos) return <Cargando />;
@@ -90,6 +90,7 @@ export default function Registro() {
     if (acc && acc.responsable_id === perfil!.id) { setMsg("Quien verifica no puede ser el responsable de la acción (RF-28)."); return; }
     await actualizar(esAcc ? { estado: "VERIFICADA", verificada_por: perfil!.id } : { estado: "VERIFICADA" }, "✓ Verificada. El tablero ya refleja el cambio.");
   };
+  const rechazar = () => actualizar({ estado: esAcc ? "EN_IMPLEMENTACION" : "EN_CURSO" }, "Devuelta al responsable para que la corrija.");
   const enviar = () => actualizar({ estado: esAcc ? "POR_VERIFICAR" : "EJECUTADA" }, esAcc ? "✓ Enviada a verificación" : "✓ Marcada como ejecutada");
   const porVerificar = estado === "POR_VERIFICAR" || estado === "EJECUTADA";
   const celular = soloActividad(perfil);
@@ -102,10 +103,11 @@ export default function Registro() {
         <b>{reg.descripcion}</b>
         {acc?.inmediata && estado !== "VERIFICADA" && <p className="bad">{min >= 0 ? `Quedan ${formatoRestante(min).replace("quedan ", "")}` : formatoRestante(min)}</p>}
         <div className="field"><span className="k" style={{ width: 90 }}>Origen</span>
-          <span className="in">{fila ? <Link href={`/iperc/${fila.codigo}`} style={{ textDecoration: "underline" }}>{fila.codigo} · {fila.clasif_inicial} ({fila.nivel_inicial}) ↗</Link> : tag.txt}</span></div>
+          <span className="in">{fila ? <Link href={`/iperc/${fila.codigo}?v=${fila.iperc_id}`} style={{ textDecoration: "underline" }}>{fila.codigo} · {fila.clasif_inicial} ({fila.nivel_inicial}) ↗</Link> : tag.txt}</span></div>
         <div className="field"><span className="k" style={{ width: 90 }}>Plazo</span>
           <span className="in">{acc ? `${fechaDM(acc.vence_en)} ${hora(acc.vence_en)}` : fechaDM(act?.fecha_fin)}</span></div>
-        <div className="field"><span className="k" style={{ width: 90 }}>Responsable</span><span className="in">{reg.responsable?.nombre ?? "—"}</span></div>
+        {act && gest && !["VERIFICADA", "EJECUTADA"].includes(estado) ? <EditarActividad act={act} onGuardado={() => { setMsg("✓ Actividad actualizada"); setV(v + 1); }} />
+          : <div className="field"><span className="k" style={{ width: 90 }}>Responsable</span><span className="in">{reg.responsable?.nombre ?? "—"}</span></div>}
         <div className="field"><span className="k" style={{ width: 90 }}>Estado</span>
           {puedeEditar && esAcc
             ? <select className="in" value={estado} onChange={(e) => actualizar({ estado: e.target.value }, "✓ Estado actualizado")}><option value="ASIGNADA">Asignada</option><option value="EN_IMPLEMENTACION">En implementación</option></select>
@@ -134,6 +136,8 @@ export default function Registro() {
         {puedeEditar && <button className="btn pri" style={{ display: "block", width: "100%", textAlign: "center", marginTop: 8, padding: 8 }} disabled={ev.length === 0} onClick={enviar}>{esAcc ? "Enviar a verificación" : "Marcar como ejecutada"}</button>}
         {puedeEditar && <small>Se activa con al menos una evidencia.{esAcc && " La verificará otra persona."}</small>}
         {porVerificar && gest && !(acc && acc.responsable_id === perfil?.id) && <button className="btn pri" style={{ display: "block", width: "100%", marginTop: 8, padding: 8 }} onClick={verificar}>Verificar {esAcc ? "acción" : "actividad"}</button>}
+        {porVerificar && gest && !(acc && acc.responsable_id === perfil?.id) && <button className="btn" style={{ display: "block", width: "100%", marginTop: 6, padding: 8 }} onClick={rechazar}>Rechazar y devolver al responsable</button>}
+        {porVerificar && gest && acc && acc.responsable_id === perfil?.id && <p className="warn">Quien verifica no puede ser el responsable de la acción (RF-28): la verifica otra persona.</p>}
         {porVerificar && !gest && <p className="muted">Pendiente de verificación por el responsable de SST.</p>}
         {estado === "VERIFICADA" && <div className="okb">✓ Verificada{acc?.verificada_por ? "" : ""}.</div>}
         {msg && <p style={{ fontSize: 13 }}>{msg}</p>}

@@ -7,7 +7,7 @@ import { hora } from "@/lib/consultas";
 export type AccionInm = {
   id: string; descripcion: string; vence_en: string; estado: string;
   responsable: { nombre: string } | null;
-  fila: { codigo: string; nivel_inicial: number; clasif_inicial: string } | null;
+  fila: { codigo: string; iperc_id?: string; nivel_inicial: number; clasif_inicial: string } | null;
 };
 
 /** RF-36: banner rojo en Inicio (W1) y tarjeta fija en el celular (W7). */
@@ -34,7 +34,7 @@ export default function AlertaInmediata({ a, celular }: { a: AccionInm; celular?
       <b>⚠ ACCIÓN INMEDIATA · Riesgo {clase} (nivel {a.fila?.nivel_inicial ?? "—"})</b> · {a.descripcion} · Responsable: {a.responsable?.nombre ?? "—"} ·{" "}
       <b>Vence {dia} {hora(a.vence_en)} · {rest}</b>{" "}
       <Link href={`/registro/accion/${a.id}`} className="btn">Ver acción</Link>
-      {a.fila && <Link href={`/iperc/${a.fila.codigo}`} className="btn">Ver fila IPERC</Link>}
+      {a.fila && <Link href={`/iperc/${a.fila.codigo}${a.fila.iperc_id ? `?v=${a.fila.iperc_id}` : ""}`} className="btn">Ver fila IPERC</Link>}
     </div>
   );
 }

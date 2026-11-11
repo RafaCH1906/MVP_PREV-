@@ -12,7 +12,7 @@ import { puedeGestionar } from "@/lib/roles";
 import TrazaPanel from "@/components/TrazaPanel";
 
 type H = { id: string; origen: string; descripcion: string; ubicacion: string | null; criticidad: string | null; fecha: string; fila_id: string | null };
-type Fila = { codigo: string; nivel_inicial: number; clasif_inicial: string; tarea: { nombre: string } | null; peligro: { codigo: string; peligro: string } | null; iperc: { version: number; estado: string } | null };
+type Fila = { codigo: string; iperc_id: string; nivel_inicial: number; clasif_inicial: string; tarea: { nombre: string } | null; peligro: { codigo: string; peligro: string } | null; iperc: { version: number; estado: string } | null };
 type U = { id: string; nombre: string };
 const ORI: Record<string, string> = { INSPECCION: "Inspección", OBSERVACION: "Observación", AUDITORIA: "Auditoría" };
 
@@ -31,12 +31,13 @@ export default function DetalleHallazgo() {
     if (!h) throw new Error("Hallazgo no encontrado");
     const acc = ok(await supabase.from("accion").select(SEL_ACC).eq("hallazgo_id", id)) as unknown as Acc[];
     const usr = ok(await supabase.from("usuario").select("id,nombre").order("nombre")) as U[];
-    const fila = h.fila_id ? (ok(await supabase.from("iperc_fila").select("codigo,nivel_inicial,clasif_inicial,tarea(nombre),peligro:peligro_catalogo(codigo,peligro),iperc:iperc_version(version,estado)").eq("id", h.fila_id).limit(1)) as unknown as Fila[])[0] ?? null : null;
-    return { h, acc, usr, fila };
+    const fila = h.fila_id ? (ok(await supabase.from("iperc_fila").select("codigo,iperc_id,nivel_inicial,clasif_inicial,tarea(nombre),peligro:peligro_catalogo(codigo,peligro),iperc:iperc_version(version,estado)").eq("id", h.fila_id).limit(1)) as unknown as Fila[])[0] ?? null : null;
+    const fotos = ok(await supabase.from("evidencia").select("id,url").eq("hallazgo_id", id).eq("tipo", "IMAGEN")) as { id: string; url: string }[];
+    return { h, acc, usr, fila, fotos };
   }, [id, perfil, v]);
   if (cargando && !datos) return <Cargando />;
   if (error || !datos) return <Cargando error={error} />;
-  const { h, acc, usr, fila } = datos;
+  const { h, acc, usr, fila, fotos } = datos;
   const cerrado = acc.length > 0 && acc.every((a) => a.estado === "VERIFICADA");
 
   const agregar = async () => {
@@ -55,7 +56,7 @@ export default function DetalleHallazgo() {
         <p><Link href="/seguimiento" style={{ textDecoration: "underline" }}>← Hallazgos</Link></p>
         <div className="blk"><small>Hallazgo · {ORI[h.origen] ?? h.origen} · {fechaDM(h.fecha)}{h.ubicacion ? ` · ${h.ubicacion}` : ""}{h.criticidad ? ` · Criticidad ${h.criticidad.toLowerCase()}` : ""}</small> &nbsp;<Tag cls="t-amb">{cerrado ? "Cerrado" : acc.length ? "Con acción" : "Abierto"}</Tag>
           <h4 style={{ fontSize: 14, marginTop: 4 }}>{h.descripcion}</h4>
-          <div className="ph">Fotos adjuntas</div></div>
+          {fotos.length ? fotos.map((x) => <img key={x.id} src={x.url} alt="foto del hallazgo" style={{ maxWidth: "100%", borderRadius: 6, marginTop: 4 }} />) : <div className="ph">Sin fotos adjuntas</div>}</div>
 
         <div className="blk"><h4>Acciones correctivas {gest && <button className="btn" onClick={() => setForm(!form)}>+ Agregar acción</button>}</h4>
           {form && (
@@ -78,8 +79,8 @@ export default function DetalleHallazgo() {
         <div className="blk" style={{ borderColor: "var(--amber)" }}><h4>¿Revela un peligro que no está en la IPERC?</h4>
           {fila ? (
             <div className="okb">✓ Relacionado con la fila <b>{fila.codigo}</b> de la <b>IPERC 2026 v{fila.iperc?.version} {fila.iperc?.estado === "BORRADOR" ? "(borrador)" : "(aprobada)"}</b>: <b>{fila.tarea?.nombre}</b> + <b>{fila.peligro?.codigo} · {fila.peligro?.peligro}</b>. {fila.iperc?.estado === "BORRADOR" ? "La v1 aprobada no cambia. " : ""}
-              <Link href={`/iperc/${fila.codigo}`} className="btn">Ir a la fila</Link></div>
-          ) : (<><button className="btn pri" disabled>Agregar a la IPERC</button> <small>Crear la fila precargada en un borrador nuevo queda para la siguiente fase.</small></>)}
+              <Link href={`/iperc/${fila.codigo}?v=${fila.iperc_id}`} className="btn">Ir a la fila</Link></div>
+          ) : (gest ? <><Link href={`/iperc/nueva?hallazgo=${h.id}`} className="btn pri">Agregar a la IPERC</Link> <small>Abre el formulario de nueva fila en el borrador de la IPERC (la versión aprobada no cambia) y enlaza este hallazgo.</small></> : <small>Solo el responsable de SST puede agregarlo a la IPERC.</small>)}
         </div>
       </div>
       <div className="col"><TrazaPanel tipo="hallazgo" id={id} /></div>

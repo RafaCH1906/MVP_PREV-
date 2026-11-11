@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { useCarga, ok } from "@/lib/hooks";
 import { useReloj } from "@/lib/reloj";
 import { Cargando, Tag } from "@/lib/ui";
+import { puedeGestionar } from "@/lib/roles";
 import { Act, SEL_ACT, actVencida, etiquetas, fechaDM, origenTag } from "@/lib/consultas";
 
 const MESES = ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
@@ -17,14 +18,24 @@ export default function Plan() {
   const { hoy } = useReloj();
   const et = etiquetas(perfil?.empresa?.metodologia);
   const [vista, setVista] = useState<"lista" | "cal" | "cron">("lista");
+  const [rec, setRec] = useState(0);
+  const [msgP, setMsgP] = useState<string | null>(null);
   const [fOrigen, setFOrigen] = useState(""); const [fResp, setFResp] = useState(""); const [fEstado, setFEstado] = useState("");
   const { datos, cargando, error } = useCarga(async () => {
     const acts = ok(await supabase.from("actividad").select(SEL_ACT).order("fecha_fin")) as unknown as Act[];
-    const h = await supabase.from("hito_documento").select("estado,fecha").eq("tipo", "PLAN").maybeSingle();
-    return { acts, hito: h.data as { estado: string; fecha: string | null } | null };
-  }, [perfil]);
+    const h = await supabase.from("hito_documento").select("id,estado,fecha").eq("tipo", "PLAN").maybeSingle();
+    return { acts, hito: h.data as { id: string; estado: string; fecha: string | null } | null };
+  }, [perfil, rec]);
   if (cargando) return <Cargando />;
   if (error || !datos) return <Cargando error={error} />;
+  const gest = puedeGestionar(perfil);
+  const sinPend = datos.acts.filter((a) => !a.responsable_id || !a.fecha_fin);
+  const aprobado = datos.hito?.estado === "Aprobado";
+  const aprobar = async () => {
+    if (!datos.hito) return;
+    const r = await supabase.from("hito_documento").update({ estado: "Aprobado", fecha: hoy, responsable_id: perfil!.id }).eq("id", datos.hito.id);
+    setMsgP(r.error ? `No se pudo aprobar: ${r.error.message}` : "✓ Plan aprobado"); setRec(rec + 1);
+  };
   const est = (a: Act) => (actVencida(a, hoy) ? "VENCIDA" : a.estado);
   const resps = Array.from(new Set(datos.acts.map((a) => a.responsable?.nombre ?? "Sin responsable")));
   const lista = datos.acts.filter((a) => (!fOrigen || origenTag(a).tipo === fOrigen) && (!fResp || (a.responsable?.nombre ?? "Sin responsable") === fResp) && (!fEstado || est(a) === fEstado));
@@ -40,7 +51,11 @@ export default function Plan() {
         <button className={`btn ${vista === "cal" ? "on" : ""}`} onClick={() => setVista("cal")}>Calendario</button>
         <button className={`btn ${vista === "cron" ? "on" : ""}`} onClick={() => setVista("cron")}>Cronograma</button>
         <button className="btn" onClick={() => window.print()}>Exportar</button>
+        {gest && <Link href="/plan/generar" className="btn pri">Generar actividades</Link>}
+        {gest && !aprobado && <button className="btn pri" disabled={sinPend.length > 0} onClick={aprobar}>Aprobar plan</button>}
       </div>
+      {!aprobado && sinPend.length > 0 && <div className="warn">No se puede aprobar: {sinPend.length} actividad(es) sin responsable o sin fecha (RF-23). Ábrelas y complétalas.</div>}
+      {msgP && <div className="okb">{msgP}</div>}
       <div style={{ marginBottom: 8 }} className="noprint">
         <select className="btn" value={fOrigen} onChange={(e) => setFOrigen(e.target.value)}><option value="">Origen: todos ▾</option><option value="BRECHA">Brecha</option><option value="CONTROL">Control</option><option value="BASE">Base</option><option value="HALLAZGO">Hallazgo</option></select>
         <select className="btn" value={fResp} onChange={(e) => setFResp(e.target.value)}><option value="">Responsable ▾</option>{resps.map((r) => <option key={r}>{r}</option>)}</select>
