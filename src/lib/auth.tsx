@@ -53,7 +53,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: emailInterno(usuario),
       password: clave,
     });
-    if (error || !data.user) return "Usuario o contraseña incorrectos";
+    if (error || !data.user) {
+      const m = error?.message ?? "";
+      if (/invalid login credentials/i.test(m)) return "Usuario o contraseña incorrectos";
+      if (/confirm/i.test(m)) return "La cuenta no está confirmada (desactiva «Confirm email» en Supabase)";
+      return `No se pudo conectar: ${m || "error desconocido"}. Revisa las variables de entorno.`;
+    }
     const r = await cargarPerfil(data.user.id);
     if (!r.perfil) return `No se pudo cargar tu perfil → ${r.error}`;
     setPerfil(r.perfil);
